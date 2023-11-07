@@ -1,2 +1,25 @@
 respond <- read.csv("Compulsory Elective (Responses) - Form Responses 1.csv")
 head(respond)
+independent_vars <- respond[, c("Food.Quality","Service.Quality","Affordability","Hygiene","Food.Options","Special.Dietary")]
+categories <- cut(respond$Satisfied, breaks = c(0, 2, 4, 6), labels = c(1, 2, 3), include.lowest = TRUE)
+model_data <- cbind(categories, independent_vars)
+set.seed(123)
+train_indices <- sample(1:nrow(model_data), 0.8 * nrow(model_data))
+train_data <- model_data[train_indices, ]
+test_data <- model_data[-train_indices, ]
+library(nnet)
+library(ggplot2)
+model <- multinom(categories ~ ., data = train_data)
+predicted_categories <- predict(model, newdata = test_data, type = "class")
+comparison_df <- data.frame(Predicted = predicted_categories, Real = test_data$categories)
+comparison_df$Index <- 1:nrow(comparison_df)
+
+
+# Plot the predicted and real categories using a line graph
+ggplot(comparison_df, aes(x = Index, y = Predicted, group = 1)) +
+  geom_line(color = "blue", linetype = "dashed") +
+  geom_line(aes(y = Real), color = "red") +
+  labs(x = "Index", y = "Category", title = "Predicted vs. Real Categories") +
+  scale_y_discrete(breaks = c(1, 2, 3), labels = c("Unsatisfied", "Neutral", "Satisfied")) +
+  theme_minimal()
+summary(model)
