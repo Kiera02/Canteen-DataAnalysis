@@ -1,7 +1,6 @@
 # Load the required libraries
 library(nnet)
 library(ggplot2)
-library(smotefamily)
 
 # Read the CSV data file
 respond <- read.csv("Compulsory Elective (Responses) - Form Responses 1.csv")
@@ -21,11 +20,8 @@ train_indices <- sample(1:nrow(model_data), 0.8 * nrow(model_data))
 train_data <- model_data[train_indices, ]
 test_data <- model_data[-train_indices, ]
 
-# Perform SMOTE to oversample the minority classes
-train_data_oversampled <- SMOTE(train_data, train_data$categories, K = 5, dup_size = 100)
-
 # Build the multinomial model on the oversampled data
-model <- multinom(categories ~ ., data = train_data_oversampled)
+model <- multinom(categories ~ ., data = train_data)
 
 # Make predictions on the test data
 predicted_categories <- predict(model, newdata = test_data, type = "class")
@@ -44,3 +40,4 @@ ggplot(comparison_df, aes(x = Index, y = Predicted, group = 1)) +
 
 # Display a summary of the multinomial model
 summary(model)
+

@@ -1,4 +1,4 @@
-Timestamp,Score,"On a scale of 1 to 6, how would you rate the overall quality of the food in the canteen?",Please rate the service provided in the canteen on a scale of 1 to 6.,How would you describe the affordability of the canteen's offerings? ,Rate the cleanliness and hygiene of the canteen on a scale from 1 to 6.,Do you feel that the canteen offers a diverse range of food options?,"How satisfied are you with the canteen's provision for special dietary needs (e.g., vegetarian, gluten-free)?",How satisfied are you with the current canteen and its offerings?
+Timestamp, Food Quality, Service Quality, Affordability, Hygiene, Food Options, Special Dietary, Satisfied
 10/31/2023 11:22:31,,5,6,6,5,4,4,5
 10/31/2023 11:51:25,,5,5,6,5,4,4,5
 10/31/2023 11:52:11,,4,5,4,4,5,2,4
