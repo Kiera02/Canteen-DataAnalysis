@@ -21,8 +21,8 @@ train_indices <- sample(1:nrow(model_data), 0.8 * nrow(model_data))
 train_data <- model_data[train_indices, ]
 test_data <- model_data[-train_indices, ]
 
-# Perform ADASYN to oversample the minority classes
-train_data_oversampled <- ADASYN(categories ~ ., data = train_data, p = 0.5)
+# Perform SMOTE to oversample the minority classes
+train_data_oversampled <- SMOTE(train_data, train_data$categories, K = 5, dup_size = 100)
 
 # Build the multinomial model on the oversampled data
 model <- multinom(categories ~ ., data = train_data_oversampled)
