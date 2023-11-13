@@ -58,9 +58,13 @@ for (cat in levels(model_data$categories)) {
 train_data <- model_data[-test_indices, ]
 test_data <- model_data[test_indices, ]
 
-
 # Build the multinomial model on the oversampled data
 model <- multinom(categories ~ ., data = train_data, control = cv_control, maxit = 100)
+
+# Check for model convergence
+if (is.null(model$fitted.values)) {
+  warning("Model did not converge. Consider increasing 'maxit' or check for issues.")
+}
 
 # Make predictions on the test data
 predicted_categories <- predict(model, newdata = test_data, type = "class")
@@ -92,19 +96,25 @@ z_values <- coef_matrix / std_errors
 # Calculate the p-values
 p_values <- 2 * (1 - pnorm(abs(z_values)))
 
-# Create a coefficient table with estimates, standard errors, and p-values
-coef_table <- cbind(Estimate = coef_matrix, `Std. Error` = std_errors, `P-value` = p_values)
+# Ensure all vectors have the same length
+min_length <- min(length(coef_matrix), length(std_errors), length(p_values))
+coef_matrix <- coef_matrix[1:min_length]
+std_errors <- std_errors[1:min_length]
+p_values <- p_values[1:min_length]
+
+# Combine coefficients, standard errors, and p-values into a matrix
+coef_matrix <- cbind(Estimate = coef_matrix, `Std. Error` = std_errors, `P-value` = p_values)
+
+# Print the coefficient matrix
+print(coef_matrix)
+
+# Filter coefficients with significant p-values
+significant_coeffs <- coef_matrix[coef_matrix[, "P-value"] < 0.05, ]
+
+# Print the significant coefficients
+print("Significant Coefficients:")
+print(significant_coeffs)
 
 # Calculate the accuracy of the model
 accuracy <- mean(predicted_categories == test_data$categories)
-
-# Predict
-new_data <- data.frame(Food.Quality = 5, 
-                       Service.Quality = 6, 
-                       Affordability = 5, 
-                       Hygiene = 5, 
-                       Food.Options = 4, 
-                       Special.Dietary = 5)
-                       
-predict(model, newdata = new_data, type = "class")
 
