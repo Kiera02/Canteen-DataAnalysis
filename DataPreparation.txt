@@ -86,21 +86,15 @@ summary_coef <- summary(model)$coefficients
 print(summary_coef)
 
 # Calculate p-value
-coef_matrix <- coef(model)
-print(coef_matrix)
 vcov_matrix <- vcov(model) # Get the variance-covariance matrix of the coefficients
-print(vcov_matrix)
 std_errors <- sqrt(diag(vcov_matrix))
-print(std_errors)
-
-# Calculate the z-values
-z_values <- coef_matrix / std_errors
-print(z_values)
-
-# Calculate the p-values
+z_values <- summary_coef / std_errors
 p_values <- 2 * (1 - pnorm(abs(z_values)))
 print(p_values)
 
+# Print the p-values less than 0.05
+significant_results <- subset(result, p_value < 0.05)
+print(significant_results)
 
 # Calculate the accuracy of the model
 accuracy <- mean(predicted_categories == test_data$categories)
